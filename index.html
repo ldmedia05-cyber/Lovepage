@@ -4,92 +4,114 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>For Meenu Baba 🌹</title>
+  <meta name="description" content="A garden of roses, made just for you." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Dancing+Script:wght@500;600;700&family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Falling petals layer -->
+  <!-- ===== Preloader: a rose blooming open ===== -->
+  <div class="preloader" id="preloader">
+    <div class="loader-rose" id="loaderRose"></div>
+    <p class="loader-text">for someone wonderful…</p>
+  </div>
+
+  <!-- ===== Custom cursor + ambient layers ===== -->
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="orbs" id="orbs" aria-hidden="true"></div>
   <div class="petals" id="petals" aria-hidden="true"></div>
+  <div class="hearts-bg" id="heartsBg" aria-hidden="true"></div>
 
-  <!-- Scroll progress bar -->
+  <!-- ===== Scroll progress + hint ===== -->
   <div class="progress-bar" id="progressBar"></div>
-
-  <!-- Scroll hint -->
   <div class="scroll-hint" id="scrollHint">
     <span>scroll</span>
     <div class="mouse"><span></span></div>
   </div>
 
-  <!-- ===================== SECTION 1 — HERO ===================== -->
+  <!-- ===== Music toggle (gentle ambient) ===== -->
+  <button class="music-toggle" id="musicToggle" aria-label="Toggle music" title="Play a little melody">
+    <span class="note">♪</span>
+  </button>
+
+  <!-- ===================== 1 — HERO ===================== -->
   <section class="panel hero" data-bg="dawn">
-    <div class="hero-rose" aria-hidden="true">🌹</div>
-    <div class="reveal" data-reveal>
-      <p class="eyebrow">a little something, from far away</p>
-      <h1 class="title">For you,<br /><span class="accent">Meenu Baba</span></h1>
-      <p class="subtitle">I can't hand you flowers today, so I built you a garden you can scroll through.</p>
+    <div class="rose3d" id="rose3d" aria-label="a blooming rose"></div>
+    <div class="reveal" data-reveal data-stagger>
+      <p class="eyebrow">a garden made just for you</p>
+      <h1 class="title">For you,<br /><span class="accent shimmer">Meenu Baba</span></h1>
+      <p class="subtitle">Every rose on this page is yours. Scroll slowly — let them bloom for you.</p>
     </div>
-    <div class="reveal-down">keep scrolling 🌹</div>
+    <div class="reveal-down">begin the garden 🌹</div>
   </section>
 
-  <!-- ===================== SECTION 2 — DISTANCE ===================== -->
+  <!-- ===================== 2 — THE GARDEN OPENS ===================== -->
   <section class="panel" data-bg="blush">
-    <div class="reveal" data-reveal>
-      <p class="story-line">Some miles sit between us right now.</p>
-      <p class="story-line delay-1">But distance has never been strong enough</p>
-      <p class="story-line delay-2">to dim what I feel for you.</p>
+    <div class="reveal" data-reveal data-stagger>
+      <p class="story-line">Some people you simply choose,</p>
+      <p class="story-line">again and again,</p>
+      <p class="story-line accent-line">and I keep choosing you.</p>
     </div>
   </section>
 
-  <!-- ===================== SECTION 3 — THE BOUQUET BUILDS ===================== -->
+  <!-- ===================== 3 — THE BOUQUET ===================== -->
   <section class="panel bouquet-panel" data-bg="rose">
     <div class="reveal" data-reveal>
       <p class="eyebrow">so here, take these</p>
-      <div class="bouquet" id="bouquet" aria-label="a bouquet of roses">
-        <span class="rose r1">🌹</span>
-        <span class="rose r2">🌹</span>
-        <span class="rose r3">🌹</span>
-        <span class="rose r4">🌹</span>
-        <span class="rose r5">🌹</span>
-        <span class="rose r6">🌹</span>
-        <span class="rose r7">🌹</span>
-        <div class="wrap"></div>
-        <div class="ribbon"></div>
+      <div class="bouquet-tilt" id="bouquetTilt">
+        <div class="bouquet" id="bouquet" aria-label="a bouquet of roses">
+          <span class="rose r1">🌹</span>
+          <span class="rose r2">🌹</span>
+          <span class="rose r3">🌹</span>
+          <span class="rose r4">🌹</span>
+          <span class="rose r5">🌹</span>
+          <span class="rose r6">🌹</span>
+          <span class="rose r7">🌹</span>
+          <span class="leaf l1">🍃</span>
+          <span class="leaf l2">🍃</span>
+          <div class="wrap"></div>
+          <div class="ribbon"></div>
+          <div class="sparkle-layer" id="sparkleLayer"></div>
+        </div>
       </div>
       <p class="story-line">A whole bouquet — one rose for every reason I adore you.</p>
+      <p class="hint-tiny">(hover the roses ✨)</p>
     </div>
   </section>
 
-  <!-- ===================== SECTION 4 — THE BIG MESSAGE ===================== -->
+  <!-- ===================== 4 — THE BIG MESSAGE ===================== -->
   <section class="panel message-panel" data-bg="deep">
+    <div class="glow-bloom" aria-hidden="true"></div>
     <div class="reveal" data-reveal>
-      <h2 class="big-message" id="bigMessage">
-        <span>I</span> <span>LOVE</span> <span>YOU</span>
-        <span class="name-line">MEENU BABA</span>
+      <h2 class="big-message" id="bigMessage" aria-label="I love you Meenu Baba">
+        <span class="word">I</span>
+        <span class="word">LOVE</span>
+        <span class="word">YOU</span>
+        <span class="name-line" id="nameLine"></span>
       </h2>
       <div class="heart" aria-hidden="true">❤️</div>
     </div>
   </section>
 
-  <!-- ===================== SECTION 5 — THE QUESTION ===================== -->
+  <!-- ===================== 5 — THE QUESTION ===================== -->
   <section class="panel question-panel" data-bg="twilight">
     <div class="reveal" data-reveal>
       <p class="eyebrow">and one gentle question</p>
       <h2 class="question">CAN WE MAKE THINGS BETTER<br /><span class="accent">FROM TODAY?</span></h2>
       <p class="subtitle soft">No pressure. Just you, me, and a fresh start. 🌹</p>
       <div class="btn-row">
-        <button class="btn yes" id="yesBtn">Yes 💕</button>
-        <button class="btn maybe" id="maybeBtn">Always 🌹</button>
+        <button class="btn yes magnetic" id="yesBtn">Yes 💕</button>
+        <button class="btn maybe magnetic" id="maybeBtn">Always 🌹</button>
       </div>
     </div>
   </section>
 
-  <!-- ===================== SECTION 6 — CLOSING ===================== -->
+  <!-- ===================== 6 — CLOSING ===================== -->
   <section class="panel closing" data-bg="dawn">
-    <div class="reveal" data-reveal>
-      <p class="signature">Until I can give you real roses,</p>
-      <p class="signature big">this garden is yours. 🌹</p>
+    <div class="reveal" data-reveal data-stagger>
+      <p class="signature">This garden is yours,</p>
+      <p class="signature big">and so am I. 🌹</p>
       <p class="forever">— forever yours</p>
     </div>
   </section>
