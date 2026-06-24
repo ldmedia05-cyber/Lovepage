@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Meenu Baba 🌹</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Falling petals layer -->
+  <div class="petals" id="petals" aria-hidden="true"></div>
+
+  <!-- Scroll progress bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Scroll hint -->
+  <div class="scroll-hint" id="scrollHint">
+    <span>scroll</span>
+    <div class="mouse"><span></span></div>
+  </div>
+
+  <!-- ===================== SECTION 1 — HERO ===================== -->
+  <section class="panel hero" data-bg="dawn">
+    <div class="hero-rose" aria-hidden="true">🌹</div>
+    <div class="reveal" data-reveal>
+      <p class="eyebrow">a little something, from far away</p>
+      <h1 class="title">For you,<br /><span class="accent">Meenu Baba</span></h1>
+      <p class="subtitle">I can't hand you flowers today, so I built you a garden you can scroll through.</p>
+    </div>
+    <div class="reveal-down">keep scrolling 🌹</div>
+  </section>
+
+  <!-- ===================== SECTION 2 — DISTANCE ===================== -->
+  <section class="panel" data-bg="blush">
+    <div class="reveal" data-reveal>
+      <p class="story-line">Some miles sit between us right now.</p>
+      <p class="story-line delay-1">But distance has never been strong enough</p>
+      <p class="story-line delay-2">to dim what I feel for you.</p>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 3 — THE BOUQUET BUILDS ===================== -->
+  <section class="panel bouquet-panel" data-bg="rose">
+    <div class="reveal" data-reveal>
+      <p class="eyebrow">so here, take these</p>
+      <div class="bouquet" id="bouquet" aria-label="a bouquet of roses">
+        <span class="rose r1">🌹</span>
+        <span class="rose r2">🌹</span>
+        <span class="rose r3">🌹</span>
+        <span class="rose r4">🌹</span>
+        <span class="rose r5">🌹</span>
+        <span class="rose r6">🌹</span>
+        <span class="rose r7">🌹</span>
+        <div class="wrap"></div>
+        <div class="ribbon"></div>
+      </div>
+      <p class="story-line">A whole bouquet — one rose for every reason I adore you.</p>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 4 — THE BIG MESSAGE ===================== -->
+  <section class="panel message-panel" data-bg="deep">
+    <div class="reveal" data-reveal>
+      <h2 class="big-message" id="bigMessage">
+        <span>I</span> <span>LOVE</span> <span>YOU</span>
+        <span class="name-line">MEENU BABA</span>
+      </h2>
+      <div class="heart" aria-hidden="true">❤️</div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 5 — THE QUESTION ===================== -->
+  <section class="panel question-panel" data-bg="twilight">
+    <div class="reveal" data-reveal>
+      <p class="eyebrow">and one gentle question</p>
+      <h2 class="question">CAN WE MAKE THINGS BETTER<br /><span class="accent">FROM TODAY?</span></h2>
+      <p class="subtitle soft">No pressure. Just you, me, and a fresh start. 🌹</p>
+      <div class="btn-row">
+        <button class="btn yes" id="yesBtn">Yes 💕</button>
+        <button class="btn maybe" id="maybeBtn">Always 🌹</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 6 — CLOSING ===================== -->
+  <section class="panel closing" data-bg="dawn">
+    <div class="reveal" data-reveal>
+      <p class="signature">Until I can give you real roses,</p>
+      <p class="signature big">this garden is yours. 🌹</p>
+      <p class="forever">— forever yours</p>
+    </div>
+  </section>
+
+  <!-- celebration burst -->
+  <div class="burst" id="burst" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
