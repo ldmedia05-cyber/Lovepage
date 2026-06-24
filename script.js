@@ -213,39 +213,94 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ============================================================
-     8. Bouquet: 3D tilt on mouse + sparkles on hover
+     8. Bouquet: 3D zoom-in, mouse tilt, tap-to-grow + more flowers
      ============================================================ */
   const bouquetTilt = document.getElementById('bouquetTilt');
   const bouquet = document.getElementById('bouquet');
+  const sparkleLayer = document.getElementById('sparkleLayer');
+
+  let tapGrow = 1;             // multiplier from taps
+  const MAX_GROW = isSmall ? 1.5 : 1.85;
+
+  function sparkleBurst(x, y, n) {
+    if (!sparkleLayer || reduceMotion) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('span');
+      s.className = 'spark';
+      s.textContent = i % 2 ? '✨' : '💗';
+      s.style.left = x + (Math.random() * 50 - 25) + 'px';
+      s.style.top = y + (Math.random() * 40 - 20) + 'px';
+      s.style.animationDelay = i * 0.04 + 's';
+      sparkleLayer.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+
+  // 3D entrance: bouquet zooms from far away to full size on scroll-in
+  if (bouquetTilt) {
+    const growIO = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            bouquetTilt.style.setProperty('--grow', tapGrow);
+            growIO.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    growIO.observe(bouquetTilt);
+  }
+
+  // desktop: 3D tilt that follows the cursor
   if (bouquetTilt && bouquet && !isTouch && !reduceMotion) {
     bouquetTilt.addEventListener('mousemove', (e) => {
       const rect = bouquetTilt.getBoundingClientRect();
       const px = (e.clientX - rect.left) / rect.width - 0.5;
       const py = (e.clientY - rect.top) / rect.height - 0.5;
-      bouquet.style.transform = `rotateY(${px * 18}deg) rotateX(${-py * 18}deg)`;
+      bouquet.style.transform = `rotateY(${px * 20}deg) rotateX(${-py * 20}deg)`;
     });
     bouquetTilt.addEventListener('mouseleave', () => {
       bouquet.style.transform = 'rotateY(0) rotateX(0)';
     });
   }
-  const sparkleLayer = document.getElementById('sparkleLayer');
+
+  // tap / click anywhere on the bouquet -> it grows bigger + a new rose blooms in
+  const EXTRA_ANGLES = [-30, 30, -52, 52, -10, 10, -68, 68, 0, -20, 20, -44, 44];
+  let extraCount = 0;
+  if (bouquet) {
+    bouquet.addEventListener('click', (e) => {
+      // grow the whole bouquet (comes closer / bigger)
+      tapGrow = Math.min(MAX_GROW, tapGrow + 0.1);
+      bouquetTilt.style.setProperty('--grow', tapGrow.toFixed(3));
+
+      // brightness pulse
+      bouquet.classList.remove('pulse');
+      void bouquet.offsetWidth;
+      bouquet.classList.add('pulse');
+
+      // bloom a brand-new rose into the bunch
+      const rose = document.createElement('span');
+      rose.className = 'rose extra';
+      rose.textContent = '🌹';
+      const ang = EXTRA_ANGLES[extraCount % EXTRA_ANGLES.length];
+      rose.style.setProperty('--rot', ang + 'deg');
+      rose.style.setProperty('--ty', -(18 + Math.random() * 26).toFixed(0) + 'px');
+      bouquet.appendChild(rose);
+      extraCount++;
+
+      // sparkles at the tap point
+      const r = bouquet.getBoundingClientRect();
+      sparkleBurst(e.clientX - r.left, e.clientY - r.top, 6);
+    });
+  }
+
+  // original roses still sparkle on hover (desktop)
   if (sparkleLayer && !reduceMotion) {
-    const sparkle = (rose) => {
-      for (let i = 0; i < 4; i++) {
-        const s = document.createElement('span');
-        s.className = 'spark';
-        s.textContent = '✨';
-        s.style.left = rose.offsetLeft + (Math.random() * 40 - 10) + 'px';
-        s.style.top = rose.offsetTop + (Math.random() * 30 - 10) + 'px';
-        s.style.animationDelay = i * 0.05 + 's';
-        sparkleLayer.appendChild(s);
-        setTimeout(() => s.remove(), 900);
-      }
-    };
     document.querySelectorAll('.rose').forEach((rose) => {
-      // hover on desktop, tap on touch devices
-      rose.addEventListener('mouseenter', () => sparkle(rose));
-      rose.addEventListener('click', () => sparkle(rose));
+      rose.addEventListener('mouseenter', () =>
+        sparkleBurst(rose.offsetLeft + 20, rose.offsetTop, 4)
+      );
     });
   }
 
@@ -299,50 +354,41 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
   /* ============================================================
-     11. Gentle ambient melody (Web Audio — no files needed)
+     11. Romantic background music (real audio file, looped)
      ============================================================ */
   const musicToggle = document.getElementById('musicToggle');
-  let audioCtx = null;
-  let melodyTimer = null;
-  let playing = false;
+  const bgMusic = document.getElementById('bgMusic');
+  if (musicToggle && bgMusic) {
+    bgMusic.volume = 0;
+    let playing = false;
+    let fadeTimer = null;
 
-  // a soft, looping arpeggio in a warm major key
-  const notes = [392.0, 493.88, 587.33, 659.25, 587.33, 493.88]; // G B D E D B
-  let noteIdx = 0;
+    function fadeTo(target, done) {
+      clearInterval(fadeTimer);
+      fadeTimer = setInterval(() => {
+        const diff = target - bgMusic.volume;
+        if (Math.abs(diff) < 0.04) {
+          bgMusic.volume = target;
+          clearInterval(fadeTimer);
+          if (done) done();
+        } else {
+          bgMusic.volume = Math.min(1, Math.max(0, bgMusic.volume + diff * 0.12));
+        }
+      }, 40);
+    }
 
-  function playNote(freq) {
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.12, now + 0.08);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
-    osc.connect(gain).connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now + 1.7);
-  }
-
-  function startMusic() {
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    playing = true;
-    musicToggle.classList.add('playing');
-    const step = () => {
-      playNote(notes[noteIdx % notes.length]);
-      noteIdx++;
-      melodyTimer = setTimeout(step, 850);
-    };
-    step();
-  }
-  function stopMusic() {
-    playing = false;
-    musicToggle.classList.remove('playing');
-    clearTimeout(melodyTimer);
-  }
-  if (musicToggle) {
-    musicToggle.addEventListener('click', () => (playing ? stopMusic() : startMusic()));
+    function play() {
+      bgMusic.play().then(() => {
+        playing = true;
+        musicToggle.classList.add('playing');
+        fadeTo(0.55);
+      }).catch(() => {});
+    }
+    function pause() {
+      fadeTo(0, () => bgMusic.pause());
+      playing = false;
+      musicToggle.classList.remove('playing');
+    }
+    musicToggle.addEventListener('click', () => (playing ? pause() : play()));
   }
 });
