@@ -359,36 +359,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const musicToggle = document.getElementById('musicToggle');
   const bgMusic = document.getElementById('bgMusic');
   if (musicToggle && bgMusic) {
-    bgMusic.volume = 0;
     let playing = false;
     let fadeTimer = null;
+    const FULL_VOL = 0.55;
 
-    function fadeTo(target, done) {
-      clearInterval(fadeTimer);
-      fadeTimer = setInterval(() => {
-        const diff = target - bgMusic.volume;
-        if (Math.abs(diff) < 0.04) {
-          bgMusic.volume = target;
-          clearInterval(fadeTimer);
-          if (done) done();
-        } else {
-          bgMusic.volume = Math.min(1, Math.max(0, bgMusic.volume + diff * 0.12));
-        }
-      }, 40);
-    }
+    // try to set volume; mobile Safari ignores this, so never depend on it
+    const trySetVol = (v) => {
+      try { bgMusic.volume = Math.min(1, Math.max(0, v)); } catch (e) {}
+    };
+    trySetVol(0);
 
     function play() {
+      clearInterval(fadeTimer);
       bgMusic.play().then(() => {
         playing = true;
         musicToggle.classList.add('playing');
-        fadeTo(0.55);
+        // step-based fade-in (no-op on mobile, smooth on desktop)
+        let step = 0;
+        const steps = 12;
+        fadeTimer = setInterval(() => {
+          step++;
+          trySetVol((FULL_VOL * step) / steps);
+          if (step >= steps) clearInterval(fadeTimer);
+        }, 35);
       }).catch(() => {});
     }
+
     function pause() {
-      fadeTo(0, () => bgMusic.pause());
+      clearInterval(fadeTimer);
       playing = false;
       musicToggle.classList.remove('playing');
+
+      // mobile can't fade volume — stop instantly so the tap feels responsive
+      if (isTouch) {
+        bgMusic.pause();
+        trySetVol(0);
+        return;
+      }
+
+      // desktop: graceful fade-out that ALWAYS stops the audio at the end
+      let step = 0;
+      const steps = 10;
+      const startVol = bgMusic.volume;
+      fadeTimer = setInterval(() => {
+        step++;
+        trySetVol(startVol * (1 - step / steps));
+        if (step >= steps) {
+          clearInterval(fadeTimer);
+          bgMusic.pause();      // guaranteed stop
+          trySetVol(0);         // reset for next play
+        }
+      }, 30);
     }
+
     musicToggle.addEventListener('click', () => (playing ? pause() : play()));
   }
 });
