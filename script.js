@@ -5,6 +5,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouch = window.matchMedia('(hover: none)').matches;
+  // lighter particle load on phones for smooth scrolling + battery
+  const isSmall = window.matchMedia('(max-width: 600px)').matches;
+  const ORB_COUNT = isSmall ? 6 : 14;
+  const PETAL_INTERVAL = isSmall ? 2200 : 1400;
+  const HEART_INTERVAL = isSmall ? 4200 : 2600;
+  const CONFETTI_COUNT = isSmall ? 42 : 80;
 
   /* ============================================================
      0. Build a layered CSS rose (hero + loader)
@@ -138,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (!reduceMotion) {
     for (let i = 0; i < 6; i++) setTimeout(spawnPetal, i * 600);
-    setInterval(spawnPetal, 1400);
+    setInterval(spawnPetal, PETAL_INTERVAL);
   }
 
   /* ============================================================
@@ -146,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
      ============================================================ */
   const orbs = document.getElementById('orbs');
   if (orbs && !reduceMotion) {
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < ORB_COUNT; i++) {
       const o = document.createElement('span');
       o.className = 'orb';
       const size = 30 + Math.random() * 90;
@@ -177,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     heartsBg.appendChild(h);
     setTimeout(() => h.remove(), duration * 1000 + 500);
   }
-  if (!reduceMotion) setInterval(spawnHeart, 2600);
+  if (!reduceMotion) setInterval(spawnHeart, HEART_INTERVAL);
 
   /* ============================================================
      7. Custom cursor glow + petal trail
@@ -224,19 +230,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const sparkleLayer = document.getElementById('sparkleLayer');
   if (sparkleLayer && !reduceMotion) {
+    const sparkle = (rose) => {
+      for (let i = 0; i < 4; i++) {
+        const s = document.createElement('span');
+        s.className = 'spark';
+        s.textContent = '✨';
+        s.style.left = rose.offsetLeft + (Math.random() * 40 - 10) + 'px';
+        s.style.top = rose.offsetTop + (Math.random() * 30 - 10) + 'px';
+        s.style.animationDelay = i * 0.05 + 's';
+        sparkleLayer.appendChild(s);
+        setTimeout(() => s.remove(), 900);
+      }
+    };
     document.querySelectorAll('.rose').forEach((rose) => {
-      rose.addEventListener('mouseenter', () => {
-        for (let i = 0; i < 4; i++) {
-          const s = document.createElement('span');
-          s.className = 'spark';
-          s.textContent = '✨';
-          s.style.left = rose.offsetLeft + (Math.random() * 40 - 10) + 'px';
-          s.style.top = rose.offsetTop + (Math.random() * 30 - 10) + 'px';
-          s.style.animationDelay = i * 0.05 + 's';
-          sparkleLayer.appendChild(s);
-          setTimeout(() => s.remove(), 900);
-        }
-      });
+      // hover on desktop, tap on touch devices
+      rose.addEventListener('mouseenter', () => sparkle(rose));
+      rose.addEventListener('click', () => sparkle(rose));
     });
   }
 
@@ -263,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const burst = document.getElementById('burst');
   function celebrate() {
     const chars = ['❤️', '🌹', '💕', '🌸', '✨', '💞', '🌷'];
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < CONFETTI_COUNT; i++) {
       const c = document.createElement('span');
       c.className = 'confetti';
       c.textContent = chars[Math.floor(Math.random() * chars.length)];

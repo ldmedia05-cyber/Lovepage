@@ -23,6 +23,9 @@ body {
   background: var(--cream);
   overflow-x: hidden;
   cursor: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 @media (hover: none) { body { cursor: auto; } }
 
@@ -241,6 +244,7 @@ body {
    ============================================================ */
 .panel {
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -634,6 +638,64 @@ body {
 @keyframes confettiFall {
   0%   { transform: translateY(-10vh) rotate(0); opacity: 1; }
   100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ============================================================
+   MOBILE OPTIMIZATION
+   ============================================================ */
+@media (max-width: 600px) {
+  /* tighter section padding, safe-area aware */
+  .panel {
+    padding: 7vh 7vw;
+    padding-left: max(7vw, env(safe-area-inset-left));
+    padding-right: max(7vw, env(safe-area-inset-right));
+  }
+
+  /* hero rose smaller so it never crowds the title */
+  .rose3d { width: 160px; height: 160px; margin-bottom: 0.5rem; }
+
+  /* readable headline spacing on narrow screens */
+  .title { letter-spacing: 0; }
+  .big-message { letter-spacing: 1px; word-spacing: 2px; }
+  .name-line { letter-spacing: 1px; }
+  .question { letter-spacing: 0; }
+
+  /* bouquet scaled to viewport so it can't overflow */
+  .bouquet {
+    width: 78vw;
+    height: 78vw;
+    max-width: 300px;
+    max-height: 300px;
+    margin: 1.4rem auto;
+  }
+  .rose { font-size: 2.7rem; }
+  .leaf { font-size: 1.9rem; }
+  .wrap { width: 22%; height: 38%; }
+  .ribbon { width: 16%; height: 6%; }
+
+  /* full-width, thumb-friendly buttons */
+  .btn-row { flex-direction: column; align-items: stretch; width: 100%; max-width: 320px; margin-inline: auto; gap: 0.8rem; }
+  .btn { width: 100%; padding: 1rem 1.5rem; font-size: 1.1rem; }
+
+  /* keep controls clear of content + notches */
+  .music-toggle {
+    top: max(14px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+    width: 42px; height: 42px;
+  }
+  .scroll-hint { bottom: max(12px, env(safe-area-inset-bottom)); }
+  .reveal-down { bottom: 9vh; font-size: 1.1rem; }
+
+  /* loosen reveal travel so nothing feels janky on small screens */
+  [data-reveal] { transform: translateY(34px); }
+
+  .loader-text { font-size: 1.25rem; }
+}
+
+/* short / landscape phones: let panels grow with content instead of clipping */
+@media (max-height: 520px) {
+  .panel { min-height: auto; padding-top: 12vh; padding-bottom: 12vh; }
+  .scroll-hint, .reveal-down { display: none; }
 }
 
 /* ============================================================
